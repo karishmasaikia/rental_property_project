@@ -153,6 +153,13 @@ assumptions.
   At much larger volumes, each model's materialization, incremental logic and physical layout (e.g.
   clustering on dates) would be reviewed and optimized, along with the cost of tests on large tables.
 
+## AI usage
+
+I used Claude (Claude Code) as a pair programmer throughout the project: to write and refactor code,
+explore alternative modeling approaches and their trade-offs, debug, and draft documentation. The design
+decisions were mine. I reviewed, tested and validated all of the code against the data, and kept a log of
+each decision and the alternatives considered.
+
 ## How to run
 
 Requires Python 3.10+ and the DuckDB CLI.
