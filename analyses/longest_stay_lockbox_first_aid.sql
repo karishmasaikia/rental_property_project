@@ -42,9 +42,4 @@ Assumptions:
   (exact match on 'lockbox' and 'first aid kit'; amenity names are lowercased in staging).
 - is_available alone is enough: a staging test confirms no reserved day is marked available.
 - Each window's stay is capped at maximum_nights and must be at least minimum_nights.
-- The limits used are the most generous in the window (max of maximum_nights, min of minimum_nights).
-  The stricter reading uses the limits on the check-in day; neither limit changes within a window
-  in this data, so both give the same result.
-- A window that reaches the last calendar date (2022-07-11) may continue beyond the data, so the true
-  longest stay could be longer (1303261 could reach its 180-night maximum).
 */

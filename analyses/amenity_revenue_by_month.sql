@@ -34,11 +34,9 @@ order by 1,2
 
 /*
 Assumptions:
-- Revenue is the sum of daily_price_usd over booked days (a reservation on that date).
-- A month is the month of the stay date, not the booking date.
-- Air conditioning is checked as of each stay date (the amenities in effect that day), with an
-  exact match on 'air conditioning'. Amenity names are lowercased and trimmed in staging.
+- Revenue is the sum of daily_price_usd over booked days
+- Air conditioning is checked as of each stay date rather than booked date with an exact match on 'air conditioning'
 - Misuse: the calendar starts on 2021-07-12 and ends on 2022-07-11, so the first and last months are
   partial. July 2022 revenue is about a third of other months, so a month-over-month chart would show a
-  false drop. Compare partial months only after adjusting for the number of days.
+  false drop
 */

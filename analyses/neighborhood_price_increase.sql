@@ -34,11 +34,7 @@ order by 3 desc
 
 /*
 Assumptions:
-- Price is daily_price_usd on that exact date, whether or not the listing was booked.
 - The increase is the average of each listing's own difference (2022 price - 2021 price), not the
   difference of the two neighborhood averages, so listings joining or leaving can't create a fake increase.
 - Only listings with a price on both dates are included (inner join).
-- Neighborhood is the listing's current neighborhood from dim_listings (SCD1). Listings missing from
-  dim_listings (e.g. 276450) are excluded.
-- listing_count shows how many listings each average is based on; averages from one listing are fragile.
 */
