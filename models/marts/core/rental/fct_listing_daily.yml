@@ -1,0 +1,75 @@
+version: 2
+
+models:
+  - name: fct_listing_daily
+    description: >
+      One row per listing per day, with the day's availability, reservation, price and stay limits, and the
+      listing's amenities as they were on that day. Listing attributes live in dim_listings, joined on
+      listing_id. Built incrementally; a listing's days are rebuilt when its calendar rows or its amenities
+      change. The calendar starts and ends mid-month, so the first and last months are partial; compare
+      them with full months only after adjusting for the number of days.
+    columns:
+      - name: listing_day_id
+        description: Primary key. Identifies one listing on one date.
+        data_tests:
+          - unique
+          - not_null
+
+      - name: listing_id
+        description: >
+          Identifier of the listing. Joins to dim_listings; a listing missing there is flagged as a warning.
+          Such a listing's days are kept, so an inner join to dim_listings drops them; use a left join to
+          keep every day.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_listings')
+                field: listing_id
+              config:
+                severity: warn
+
+      - name: calendar_date
+        description: '{{ doc("calendar_date") }}'
+        data_tests:
+          - not_null
+
+      - name: is_available
+        description: '{{ doc("is_available") }}'
+
+      - name: reservation_id
+        description: '{{ doc("reservation_id") }}'
+
+      - name: is_booked
+        description: True if the listing had a reservation on this date.
+
+      - name: daily_price_usd
+        description: '{{ doc("daily_price_usd") }}'
+
+      - name: minimum_nights
+        description: '{{ doc("minimum_nights") }}'
+
+      - name: maximum_nights
+        description: '{{ doc("maximum_nights") }}'
+
+      - name: listing_change_id
+        description: >
+          Identifies the amenities version in effect on this date (see int_listing_amenities_history).
+          Empty if the listing has no amenities recorded for this date; flagged as a warning.
+        data_tests:
+          - not_null:
+              config:
+                severity: warn
+
+      - name: amenities
+        description: '{{ doc("amenities") }}'
+
+      - name: calendar_loaded_at
+        description: >
+          When the calendar row was loaded into the raw table. Used to pick up new calendar rows in
+          incremental runs.
+
+      - name: amenities_loaded_at
+        description: >
+          When the amenities change in effect on this date was loaded into the raw table. Used to pick up
+          amenity changes in incremental runs.

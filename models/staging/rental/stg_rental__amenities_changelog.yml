@@ -1,0 +1,43 @@
+version: 2
+
+models:
+  - name: stg_rental__amenities_changelog
+    description: >
+      One row per listing per amenities change, cleaned from the source amenities changelog. Each row holds
+      the listing's full amenity list as of that change. When the same change is loaded more than once, the
+      most recently loaded row is kept.
+    columns:
+      - name: listing_change_id
+        description: >
+          Primary key. Surrogate key hashed from listing_id and changed_at, giving each listing/change one
+          single-column identifier.
+        data_tests:
+          - unique
+          - not_null
+
+      - name: listing_id
+        description: >
+          Identifier of the listing whose amenities changed. One of the two columns listing_change_id is
+          built from. Expected to exist in stg_rental__listings; a listing missing there is flagged as a
+          warning.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_rental__listings')
+                field: listing_id
+              config:
+                severity: warn
+
+      - name: changed_at
+        description: >
+          When the listing's amenities changed. One of the two columns listing_change_id is built from.
+        data_tests:
+          - not_null
+
+      - name: amenities
+        description: '{{ doc("amenities") }}'
+
+      - name: _loaded_at
+        description: >
+          When the row was loaded into the raw table. Used to pick the latest row among duplicates.

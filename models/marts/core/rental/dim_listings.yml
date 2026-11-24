@@ -1,0 +1,71 @@
+version: 2
+
+models:
+  - name: dim_listings
+    description: >
+      One row per listing with its current attributes: property details, review summary and host details.
+      Values are the latest known for each listing and are not kept as history. Join to fct_listing_daily
+      on listing_id.
+    columns:
+      - name: listing_id
+        description: Primary key. Unique identifier of the listing.
+        data_tests:
+          - unique
+          - not_null
+
+      - name: listing_name
+        description: '{{ doc("listing_name") }}'
+
+      - name: neighborhood
+        description: '{{ doc("neighborhood") }}'
+
+      - name: property_type
+        description: '{{ doc("property_type") }}'
+
+      - name: room_type
+        description: '{{ doc("room_type") }}'
+
+      - name: accommodates
+        description: '{{ doc("accommodates") }}'
+
+      - name: bathroom_count
+        description: '{{ doc("bathroom_count") }}'
+
+      - name: bathroom_privacy
+        description: '{{ doc("bathroom_privacy") }}'
+
+      - name: bedrooms
+        description: '{{ doc("bedrooms") }}'
+
+      - name: beds
+        description: '{{ doc("beds") }}'
+
+      - name: first_calendar_price_usd
+        description: '{{ doc("first_calendar_price_usd") }}'
+
+      - name: number_of_reviews
+        description: '{{ doc("number_of_reviews") }}'
+
+      - name: first_review_date
+        description: '{{ doc("first_review_date") }}'
+
+      - name: last_review_date
+        description: '{{ doc("last_review_date") }}'
+
+      - name: review_scores_rating_avg
+        description: '{{ doc("review_scores_rating_avg") }}'
+
+      - name: host_id
+        description: '{{ doc("host_id") }}'
+
+      - name: host_name
+        description: '{{ doc("host_name") }}'
+
+      - name: host_since_at
+        description: '{{ doc("host_since_at") }}'
+
+      - name: host_location
+        description: '{{ doc("host_location") }}'
+
+      - name: host_verifications
+        description: '{{ doc("host_verifications") }}'

@@ -1,0 +1,111 @@
+version: 2
+
+models:
+  - name: stg_rental__listings
+    description: >
+      One row per listing, cleaned from the source listings table. Excludes test listings (name starting
+      with "testing") and rows with a missing listing ID. When a listing is loaded more than once, the most
+      recently loaded row is kept.
+    columns:
+      - name: listing_id
+        description: >
+          Primary key. Unique identifier of the listing. Expected to exist in stg_rental__calendar and
+          stg_rental__amenities_changelog; a listing missing from either is flagged as a warning.
+        data_tests:
+          - unique
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_rental__calendar')
+                field: listing_id
+              config:
+                severity: warn
+          - relationships:
+              arguments:
+                to: ref('stg_rental__amenities_changelog')
+                field: listing_id
+              config:
+                severity: warn
+
+      - name: listing_name
+        description: '{{ doc("listing_name") }}'
+
+      - name: host_id
+        description: '{{ doc("host_id") }}'
+        data_tests:
+          - not_null:
+              config:
+                severity: warn
+
+      - name: host_name
+        description: '{{ doc("host_name") }}'
+
+      - name: host_since_at
+        description: '{{ doc("host_since_at") }}'
+
+      - name: host_location
+        description: '{{ doc("host_location") }}'
+
+      - name: host_verifications
+        description: '{{ doc("host_verifications") }}'
+
+      - name: neighborhood
+        description: '{{ doc("neighborhood") }}'
+
+      - name: property_type
+        description: '{{ doc("property_type") }}'
+
+      - name: room_type
+        description: '{{ doc("room_type") }}'
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['Entire home/apt', 'Private room']
+              config:
+                severity: warn
+
+      - name: accommodates
+        description: '{{ doc("accommodates") }}'
+        data_tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                inclusive: false
+              config:
+                severity: warn
+
+      - name: bathroom_count
+        description: '{{ doc("bathroom_count") }}'
+
+      - name: bathroom_privacy
+        description: '{{ doc("bathroom_privacy") }}'
+
+      - name: bedrooms
+        description: '{{ doc("bedrooms") }}'
+
+      - name: beds
+        description: '{{ doc("beds") }}'
+
+      - name: first_calendar_price_usd
+        description: '{{ doc("first_calendar_price_usd") }}'
+        data_tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                inclusive: false
+
+      - name: number_of_reviews
+        description: '{{ doc("number_of_reviews") }}'
+
+      - name: first_review_date
+        description: '{{ doc("first_review_date") }}'
+
+      - name: last_review_date
+        description: '{{ doc("last_review_date") }}'
+
+      - name: review_scores_rating_avg
+        description: '{{ doc("review_scores_rating_avg") }}'
+
+      - name: _loaded_at
+        description: >
+          When the row was loaded into the raw table. Used to pick the latest row per listing.

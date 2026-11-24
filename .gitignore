@@ -1,0 +1,9 @@
+*.duckdb
+*.duckdb.wal
+.venv/
+target/
+dbt_packages/
+logs/
+.user.yml
+data/
+.DS_Store

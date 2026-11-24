@@ -1,0 +1,10 @@
+# Connection settings. Kept in the repo (not ~/.dbt) so anyone who clones it can run the
+# project as-is; DuckDB is a local file, so there are no credentials to protect.
+# Run dbt from the project root: the path is relative to the working directory.
+rental_property:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      path: rental.duckdb
+      threads: 4

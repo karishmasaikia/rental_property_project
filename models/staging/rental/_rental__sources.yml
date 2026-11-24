@@ -1,0 +1,45 @@
+version: 2
+
+sources:
+  - name: rental
+    description: Rental property management source system, loaded into the raw schema of rental.duckdb.
+    schema: raw
+    tables:
+      - name: calendar
+        description: >
+          Daily availability, price and booking rules per listing. Expected grain is one row per
+          listing per date, but the source can contain duplicate rows for the same listing and date.
+          _loaded_at records when each row was loaded.
+        columns:
+          - name: listing_id
+            data_tests:
+              - not_null
+          - name: date
+            data_tests:
+              - not_null
+
+      - name: listings
+        description: >
+          One row per listing with its descriptive attributes, host details and review summary, as of the
+          start of the calendar's date range. Can contain rows with a missing ID (including a test listing).
+          PRICE is text formatted like '$125.00'. _loaded_at records when each row was loaded.
+        columns:
+          - name: id
+            data_tests:
+              - not_null:
+                  config:
+                    severity: error
+                    warn_if: ">0"
+                    error_if: ">10"
+
+      - name: amenities_changelog
+        description: >
+          One row per amenities change per listing. Each row holds the listing's full amenity list after the
+          change, as a JSON array in text. _loaded_at records when each row was loaded.
+        columns:
+          - name: listing_id
+            data_tests:
+              - not_null
+          - name: change_at
+            data_tests:
+              - not_null

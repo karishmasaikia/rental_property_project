@@ -1,0 +1,39 @@
+version: 2
+
+models:
+  - name: int_listing_amenities_history
+    description: >
+      One row per listing per amenities version, with the date range each version was in effect. When a
+      listing's amenities change more than once on the same day, the last change of that day is kept. A day
+      belongs to a version when valid_from_date <= day < valid_to_date.
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - listing_id
+              - valid_from_date
+    columns:
+      - name: listing_change_id
+        description: Primary key. Identifies the amenities change this version comes from.
+        data_tests:
+          - unique
+          - not_null
+
+      - name: listing_id
+        description: Identifier of the listing.
+
+      - name: valid_from_date
+        description: First date this version of the listing's amenities was in effect.
+
+      - name: valid_to_date
+        description: >
+          Date the next version took effect (exclusive). 9999-12-31 for the current version.
+
+      - name: is_current
+        description: True for the listing's latest amenities version.
+
+      - name: amenities
+        description: '{{ doc("amenities") }}'
+
+      - name: _loaded_at
+        description: When the amenities change behind this version was loaded into the raw table.

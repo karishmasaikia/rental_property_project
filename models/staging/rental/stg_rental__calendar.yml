@@ -1,0 +1,64 @@
+version: 2
+
+models:
+  - name: stg_rental__calendar
+    description: >
+      One row per listing per date, cleaned from the source calendar. When a listing/date is loaded more
+      than once, the most recently loaded row is kept. Built incrementally.
+    data_tests:
+      - dbt_utils.expression_is_true:
+          arguments:
+            expression: "not (reservation_id is not null and is_available)"
+          config:
+            severity: warn
+    columns:
+      - name: listing_day_id
+        description: >
+          Primary key. Surrogate key hashed from listing_id and calendar_date, giving each listing/date
+          one single-column identifier.
+        data_tests:
+          - unique
+          - not_null
+
+      - name: listing_id
+        description: >
+          Identifier of the listing this row describes. One of the two columns listing_day_id is built from.
+          Expected to exist in stg_rental__listings; a listing missing there is flagged as a warning.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_rental__listings')
+                field: listing_id
+              config:
+                severity: warn
+
+      - name: calendar_date
+        description: '{{ doc("calendar_date") }}'
+        data_tests:
+          - not_null
+
+      - name: is_available
+        description: '{{ doc("is_available") }}'
+
+      - name: reservation_id
+        description: '{{ doc("reservation_id") }}'
+
+      - name: daily_price_usd
+        description: '{{ doc("daily_price_usd") }}'
+        data_tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                inclusive: false
+
+      - name: minimum_nights
+        description: '{{ doc("minimum_nights") }}'
+
+      - name: maximum_nights
+        description: '{{ doc("maximum_nights") }}'
+
+      - name: _loaded_at
+        description: >
+          When the row was loaded into the raw table. Used to pick the latest row among duplicates and to
+          drive incremental runs.
