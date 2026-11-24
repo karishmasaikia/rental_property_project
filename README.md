@@ -27,10 +27,37 @@ data/                                         source CSVs (not in the repo; see 
 
 Lineage:
 
-```
-raw.calendar ─────────────► stg_rental__calendar ──────────────────────────────────────────┐
-raw.listings ─────────────► stg_rental__listings ──► dim_listings                          ├──► fct_listing_daily
-raw.amenities_changelog ──► stg_rental__amenities_changelog ──► int_listing_amenities_history ┘
+```mermaid
+flowchart LR
+    subgraph sources["Sources (raw)"]
+        raw_calendar[(calendar)]
+        raw_listings[(listings)]
+        raw_changelog[(amenities_changelog)]
+    end
+
+    subgraph staging["Staging"]
+        stg_calendar[stg_rental__calendar]
+        stg_listings[stg_rental__listings]
+        stg_changelog[stg_rental__amenities_changelog]
+    end
+
+    subgraph intermediate["Intermediate"]
+        int_history[int_listing_amenities_history]
+    end
+
+    subgraph marts["Marts"]
+        dim_listings[dim_listings]
+        fct_daily[fct_listing_daily]
+    end
+
+    raw_calendar --> stg_calendar
+    raw_listings --> stg_listings
+    raw_changelog --> stg_changelog
+    stg_changelog --> int_history
+    stg_listings --> dim_listings
+    stg_calendar --> fct_daily
+    int_history --> fct_daily
+    dim_listings -. listing_id .- fct_daily
 ```
 
 ## Models
